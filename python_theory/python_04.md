@@ -182,8 +182,6 @@ test(name = 'swan', age = 24)
 
 2. pip install -r requirments.txt
 
-
-
 ## 가상환경
 
 - 파이썬 표준 라이브러리가 아닌 외부 패키지와 모듈을 사용하는 경우 모두 pip를 통해 설치 해야 함
@@ -207,14 +205,12 @@ test(name = 'swan', age = 24)
 1. git이 없는 폴더에서 git-bash 실행
 
 2. (1. python) (2. -m) (3. venv) (4. venv)
-
- -> (1.파이썬아) (2. 모듈을 쓸건데) (3. venv라는 가상환경)을 실행할건데 (4. 폴더이름은 venv)로 해줘
+   
+   -> (1.파이썬아) (2. 모듈을 쓸건데) (3. venv라는 가상환경)을 실행할건데 (4. 폴더이름은 venv)로 해줘
 
 3. 가상환경 실행 > source (venv : 폴더명)/Scripts/activate >> source로 venv 폴더에 있는 스크립트에 있는 activate를 실행
 
 4. 가상환경 끄기 > deactivate
-
-
 
 ### 작업환경이 달라질때 가상환경 가져오는법
 
@@ -225,5 +221,3 @@ test(name = 'swan', age = 24)
 3. 바뀐 작업환경에서 가상환경을 키고
 
 4. pip install -r requirements.txt
-
-
