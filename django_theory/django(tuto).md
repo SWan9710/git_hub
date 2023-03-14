@@ -22,8 +22,6 @@
   
   - 러닝커브(사용하기 위해 배워야 한다) 가 존재한다.
 
-
-
 ## 클라이언트와 서버
 
 > 클라이언트 - 서버 구조
@@ -86,8 +84,6 @@
    
    - python manage.py runserver >> vscode에서 실행해보자
 
-
-
 ## Django Application
 
 - 애플리케이션 생성
@@ -98,7 +94,7 @@
 
 - 앱을 사용하기 위해서는 반드시 settings.py > INSTALLED_APPS 에 `'articles',` 라고 작성해 줘야함 애플리케이션 이름을 articles로 작성했기 때문에 articles라고 추가
 
-
+<mark>항상 애플리케이션 먼저 생성해주고 그 뒤에 INSTALLED_APPS에 추가해줘야함</mark>
 
 ## 실행해보기
 
@@ -107,7 +103,7 @@
    - ```python
      from articles import views
      
-     path('articles/' views.index)
+     path('articles/', views.index),
      ```
 
 2. View
@@ -117,5 +113,3 @@
   def index(request):
       return HttpResponse("<h1>내가쓰고싶은내용쓰</h1>")
   ```
-
-
