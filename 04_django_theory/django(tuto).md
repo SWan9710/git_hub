@@ -107,9 +107,13 @@
      ```
 
 2. View
-- ```python
-  from django.http import HttpResponse
-  
-  def index(request):
-      return HttpResponse("<h1>내가쓰고싶은내용쓰</h1>")
-  ```
+
+```python
+from django.http import HttpResponse
+
+
+
+def index(request):
+
+  return render(requese, 'articles/index.html')
+```
