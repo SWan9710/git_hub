@@ -8,4 +8,6 @@
 
 잘부탁드립니다.
 
+자리이동
+
 ![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=SWan9710&count_private=true)
