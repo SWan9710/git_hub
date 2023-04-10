@@ -1,0 +1,274 @@
+# DB 관계
+
+- RDB(관계형 데이터베이스)
+  
+  - 데이터를 테이블, 행, 열 등으로 나누어 구조화하는 방식
+  
+  - 모든 테이블에는 <mark>기본 키</mark> 라는 고유 식별자 속성이 있음
+  
+  - 외래키를 사용하여 각 행에서 서로 다른 테이블 간의 관계를 만드는데 사용할 수 있음
+  
+  - SQL을 이용하여 데이터베이스를 조작한다.
+
+## DB관계설정
+
+**A, B 테이블을 연결할 때**
+
+- A 테이블에 B 테이블의 정보를 가져오기 위해서 B 테이블이 기본 키 를 A 테이블의 외래 키 로 들고와서 연결
+
+- 반대의 경우도 기본 키 를 이용하여 다른 테이블에 연결
+
+# RDB에서의 관계
+
+1. 1 : 1 관계
+   
+   - one to one
+   
+   - 한 테이블의 레코드 하나가 다른 테이블의 레코드 단 한개와 관련된 경우
+
+2. <mark>N : 1 관계</mark> 가장 많이 사용되는 관계
+   
+   - Many to one
+   
+   - 한 테이블의 0개 이상의 레코드가 다른 테이블의 레코드 한 개와 관련된 경우
+   
+   - 기준 테이블에 따라 1:N 혹은 N:1 로 나누어진다.
+
+3. N : M 관계
+   
+   - Many to Many
+   
+   - 한 테이블의 0개 이상의 레코드가 다른 테이블의 0개 이상의 레코드와 관련된 경우
+
+## FK(외래 키)
+
+- 키를 사용하여 부모 테이블의 유일한 값을 참조
+
+- 반드시 기본 키 일 필요는 없지만 중복값은 X
+
+# N : 1 관계
+
+> 여러 개의 주문 입장에서 각각 어떤 주문에 속해 있는지 표현해야 하므로 고객 테이블의 PK를 주문 테이블에 FK로 집어 넣어 관계를 표현
+> 
+> 고객(1) 은 여러 주문(N)을 진행 가능함
+
+## 코드로 적용하기
+
+> 
+
+Django의 관계설정
+
+![](C:\Users\SSAFY\AppData\Roaming\marktext\images\2023-04-10-09-22-42-image.png)
+
+foreignkey 설정 시 to 부분 주의깊게 봐야한다.
+
+## Django Comment table 생성
+
+1. 새로운 comment 필드를 정의하고 ForeignKey를 받을 부분을 설정해 줘야함
+
+2. 아래의 이미지에서 ForeignKey 뒤가 to 부분이고 <mark>on_delete</mark>를 사용하여 외래 키 설정함
+
+![](DB%20관계%20및%20comment%20구현_assets/13de3e9651eef2985adf38cc4b0c63ac5dc751b0.png)
+
+## on_delete
+
+- 외래 키가 참조하는 객체가 사라졌을 때, 외래 키를 가진 객체를 어떻게 처리할 지를 정의
+
+- on_delete 옵션 값
+  
+  - CASCADE : 부모 객체가 삭제 됐을 때 이를 참조하는 객체도 삭제
+  
+  - SET_NULL : 부모 객체가 삭제 됐을 때 이를 참조하는 객체를 NULL값으로 변경
+  
+  - SET_DEFAULT : 부모 객체가 삭제 됐을 때 이를 참조하는 객체는 내가 설정한 DEFAULT 값으로 변경
+  
+  - PROTECT : PROTECT로 보호를걸어두면 삭제 하려 할때 오류가 발생한다.
+3. 이 후 makemigrations, migrate 로 테이블 생성해 줌
+
+4. ![](DB%20관계%20및%20comment%20구현_assets/2d02b9221f3b1fd2b67b8be2c53baaccb0ffae77.png)
+   
+   - 새로 생성한 테이블에 article_id 필드가 생성딘 걸 확인 해줌
+
+5. 댓글 생성 연습해보기
+   
+   - `python manage.py shell_plus`
+   
+   - ![](DB%20관계%20및%20comment%20구현_assets/22d6ef6c5c39bdeddb6053f345708aed7c89e708.png)
+   
+   - 아직 article_id 값을 지정하지 않아서 오류가 발생한다.
+
+6. 오류 없이 작성하기 위해 아래와 같이 작성한다
+   
+   ![](DB%20관계%20및%20comment%20구현_assets/20c237d6366bf05432774c82a8f8cc8d5f066485.png)
+
+7. 2번째 댓글 생성해보기
+   
+   ![](DB%20관계%20및%20comment%20구현_assets/08a5e04eba190693371cf13fa321549864e42ab5.png)
+   
+   - 생성시 article 을 직접 넘겨줘서 오류없이 저장 됨
+
+정참조 / 역참조
+
+- 내가 생성한 Comment 에서 Article의 title로 접근하는 방식 이 정참조
+  
+  - Comment 테이블에서 Article을 외래키로 받았으니 정참조가 맞음
+
+- 반대로 Article에서 Comment로 접근하는 방식을 역참조 라고 한다.
+  
+  - Comment 테이블에 FK로 연결된 Article의 반대로 연결하여 접근하닌 역참조가 맞음
+
+- 정참조 할때는 obcjects 라는 매니저를 통해 queryset api를 사용한 것처럼 접근 및 사용이 가능함
+
+- 역참조 때는 아래 그림처럼 접근
+  
+  ![](DB%20관계%20및%20comment%20구현_assets/569a98cb9112a3d29a5706236bab9af058681142.png)
+
+- objects 매니저가 comment_set 으로 바뀌게 된거고 이 이름을 바꾸려면 생성한 Comment 테이블에 related_name = '바꿀이름'을 추가해주면 된다.
+
+- FK입력받는 부분에 괄호뒤에 추가해줌
+
+# Django comment 구현
+
+## CREATE
+
+1. Comment를 입력받을 form 설정하기
+   
+   - articles의 forms.py에서 form 추가해주기
+   
+   - 상단에 model 불러오기
+   
+   ![](DB%20관계%20및%20comment%20구현_assets/025ca2b2de60021a39dd7575fba9c773570e2faf.png)
+   
+   ![](DB%20관계%20및%20comment%20구현_assets/050b77508d716aa25fc0826d589844c38c157222.png)
+   
+   - 여기서 fields는 모든 fields 를 불러올게 아니고 content만 불러올 것이므로 fields 설정을 exclude로 article를 제외해 준거
+
+2. views.py 수정하기
+   
+   - form을 정의 해 주었기에 상단에 form을 import 먼저 해줘야함
+   
+   - comment 이므로 보여줄 화면은 게시글의 상세페이지이므로 views.py의 detail 페이지를 수정해 줘야함
+   
+   - detail페이지에 받아올 form 불러서 변수에 저장하고 context에 담아서 넘겨주기
+   
+   ![](DB%20관계%20및%20comment%20구현_assets/78687baad47f91d8dfdd0114190fc8344cbe2b5a.png)
+
+3. html 수정
+   
+   - form을 출력하는 것 이므로 html에 form으로 작성해 주어야 함 
+   
+   - detail에서 넘겨주는 html은 detail.html 이므로 detail.html을 수정
+   
+   - 단순히 보여주기만 하므로 form 형식으로 작성 후 넘겨주기 아직 url 설정을 하지 않았으므로 action 부분은 #으로 그냥 넘겨주는거
+   
+   ![](DB%20관계%20및%20comment%20구현_assets/12c0d9d234f2d93d39c5b97cb0e1a67ed018b3f4.png)
+
+4. 외래키 필드를 form에서 제외 했으므로 views.py에서 외래키를 다시 받아와야 함
+   
+   1. 외래키를 받을 url을 설정
+   
+   ![](DB%20관계%20및%20comment%20구현_assets/95d4c042d6333b339103e83ef3c99788d8a5482c.png)
+   
+   2. 입력받은 url을 처리할 views.py 정의
+      
+      - 외래키를 article에서 받아오므로 article를 저장해야 하는데 article 저장없이 form만 저장하면 오류남
+      
+      - form.save() 하면 git add 후 git commit 하듯이 commit 과정이 일어나는데 이때 외래키 지정없이 form을 사용하니 당연히 오류가 발생하는것 commit 과정 이전까지의 form을 저장 후 외래키를 받아와서 변수에 둘다 저장해서 form을 저장해주면 됨
+      
+      ![](C:\Users\SSAFY\AppData\Roaming\marktext\images\2023-04-10-11-40-10-image.png)
+   
+   3. 다시 html 파일을 수정 해줘야 함 지금은 form의action 부분을 # 으로 넘겼으니 그부분을 다시 수정
+      
+      - url을 입력받아 처리할 건데 comment 보여주는 화면은 detail 페이지 이므로 detail 의 html을 수정
+      
+      - form을 추가 후 url 설정 url은 urls.py 에서 받아온 url 그리고 해당하는 페이지의 pk 번호가 있어야 제대로 출력이 가능 함수에서 pk를 넘겨받았기 때문
+      
+      ![](DB%20관계%20및%20comment%20구현_assets/c1665eef939f2881400dc84a4aebe07a476bbe6e.png)
+
+#### 실행화면
+
+> ![](C:\Users\SSAFY\AppData\Roaming\marktext\images\2023-04-10-11-53-53-image.png)
+
+## READ
+
+1. create를 통해 댓글 기능을 생성 했으므로 detail 페이지에서 댓글을 보여주게 하기위해 views.py 수정
+   
+   - 최상단에 Comment 모델 import
+   
+   ![](DB%20관계%20및%20comment%20구현_assets/2ca21483b59c23cca1220292fff3b57cc25966e9.png)
+   
+   - detail 함수 수정
+   
+   ![](DB%20관계%20및%20comment%20구현_assets/2594d3ae5e54804309e6aece369e98bd9fef3ee1.png)
+   
+   1. commet를 가져오기 위해 참조하는 테이블인 article에서 comment를 가져오는 것이기에 역참조에 해당
+   
+   2. 역참조의 매니저는 해당테이블이름_set 으로 사용하기에 comment_set으로 작성
+   
+   3. 이후 모든 댓글을 보여주게 할것이므로 all 을 이용하여 모두 들고오고 해당 작업을 변수 comments에 저장하여 context에 넘겨준것
+
+2. comment를 보여주는 페이지는 detail 이므로 detail의 html 수정하기
+   
+   - html 기능중 하나인 unorder-list 와 order-list를 이용하여 묶어서 출력해준거
+   
+   ![](DB%20관계%20및%20comment%20구현_assets/143b01d6d89abfe9efd7756b0a9b0226898f5426.png)
+   
+   - views.py에서 comments로 넘겨 주었기에 for 문 안에 comments 의 comment로 받아옴
+
+#### 실행화면
+
+> ![](DB%20관계%20및%20comment%20구현_assets/79908a2ce2407d53db5ad726a0b4818b68e3cdf2.png)
+
+## DELETE
+
+1. 댓글 삭제시의 url 입력받기
+   
+   - url 입력 받을때 페이지의 pk 번호와 댓글의 pk 번호가 있어야 하므로 url의 path가 길어짐
+   
+   ![](DB%20관계%20및%20comment%20구현_assets/e937dbf7de9a6b5eefbd858f234dfc7c96e93791.png)
+
+2. 입력받은 url을 처리할 views.py 함수 정의
+   
+   - 함수입력 받을때 역시 페이지의 pk와 댓글의 pk를 넘겨받아야 함
+   
+   ![](DB%20관계%20및%20comment%20구현_assets/f0230be51cd37fb74b198202857dda1b7a12376c.png)
+   
+   - 하나의 댓글을 가져와서 삭제할 것이므로 get 메소드로 받아오고 이번에는 정참조 이므로 Comment의 매니저인 objects를 이용하여 접근함 
+   
+   - 게시글 삭제나 유저의 회원탈퇴 처럼 comment라는 변수에 저장하여 delete를 실행
+   
+   - 실행 이후 detail 페이지를 그대로 보여줄건데 이때 그 댓글이 있던 게시글을 보여줘야 하므로 article의 pk를 넘겨줌
+
+3. 삭제 버튼 구현하기
+   
+   - 댓글 삭제 역시 게시글의 상세페이지에서 이루어지므로 detail의 html을 수정
+   
+   ![](DB%20관계%20및%20comment%20구현_assets/d25cded33a912bd8c0b17998daf533aedafa0162.png)
+
+#### 실행화면
+
+> ![](DB%20관계%20및%20comment%20구현_assets/3752c0443bbd90d1f2c44cdbff98774105121bc4.png)
+
+## 댓글 개수 출력하기
+
+- 수정한 detail의 html 에 조건문을 추가하여 댓글의 갯수를 불러올 수 있음
+  
+  1. 댓글이 있는 경우 댓글의 수 출력
+     
+     - DTL filter의 length 를 이용하여 댓글 수 출력이 가능함
+     
+     ![](DB%20관계%20및%20comment%20구현_assets/169b94494a326e1adc20901312aa0774e25933f4.png)
+     
+     - 댓글이 있는 경우만 출력하므로 if 조건문에 comments의 True 인 경우 아래 조건을 실행함
+     
+     - 실행시 댓글의 갯수를 p태그로 묶고 글꼴을 bold로 출력
+  
+  2. 댓글이 없는 경우 대체 컨텐츠 출력
+     
+     - 댓글이 없는 경우에도 조건문을 걸어주면 되는데 if 조건문이 아닌 다른 조건문인 empty를 사용
+     
+     ![](C:\Users\SSAFY\AppData\Roaming\marktext\images\2023-04-10-12-07-32-image.png)
+
+#### 실행화면
+
+> ![](DB%20관계%20및%20comment%20구현_assets/4fb91e8a39d05e11b4910fd1ef2f3cafe79e0c3c.png)
